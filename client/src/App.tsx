@@ -2,6 +2,17 @@ import logo from './logo.svg';
 import './App.css';
 
 function App() {
+  const client = new WebSocket('ws://localhost:3000');
+  client.addEventListener("open", () => {
+    // Causes the server to print "Hello"
+    client.send('Hello');
+  })
+  client.addEventListener("message", msg => {
+    const data = JSON.parse(msg.data);
+    console.log(data);
+  })
+
+
   return (
     <div className="App">
       <header className="App-header">
