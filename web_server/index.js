@@ -30,6 +30,43 @@ const findByIdAndSend = (req, res) => {
 
 app.use(express.json());
 
+app.get("/api/locations", (req, res)=> {
+    res.send(data.locations);
+})
+
+app.get("/api/locations/:id", (req, res, next)=>{
+    req.dataFindByIdAndSend = {data:data.locations, errorMsg:"Device was not found"};
+    next();
+}, findByIdAndSend)
+
+app.post("/api/locations/create", (req, res) => {
+    const {name} = req.body;
+    const id = uuid();
+    const newLocation = {name, id};
+    data.locations.push(newLocation);
+    res.send(newLocation);
+})
+
+app.post("/api/locations/update/:id", (req, res)=>{
+    const {name} = req.body;
+    const id = req.params.id;
+
+    let foundLocation = false;
+    data.locations = data.locations.map(location=>{
+        if (location.id == id && !foundLocation){
+            location = {...location, name};
+            foundLocation = location;
+        }
+        return location;
+    });
+
+    if(!foundLocation) {
+        res.send({error:"Location not found"});
+    }else {
+        res.send(foundLocation);
+    }
+})
+
 app.get("/api/devices", (req, res) => {
     res.send(data.devices);
     // wsServer.clients.forEach(clientSock=>{
@@ -40,18 +77,25 @@ app.get("/api/devices", (req, res) => {
 })
 
 app.get("/api/devices/:id", (req, res, next) => {
-    req.dataFindByIdAndSend = {data: data.devices, errorMsg: "Device was not found"}
-    next()
+    req.dataFindByIdAndSend = {data: data.devices, errorMsg: "Device was not found"};
+    next();
 }, findByIdAndSend);
 
 
 app.post("/api/devices/update/:id", (req, res) => {
-    const {location, currentSurvey} = req.body;
+    const {location:locationId, currentSurvey} = req.body;
     const foundSurveys = data.surveys.filter(survey=>survey.id == currentSurvey).length;
     if(foundSurveys == 0) {
         res.send({error:"Survey not found"});
         return;
     }
+
+    const foundLocations = data.locations.filter(location=>location.id == locationId).length;
+    if(foundLocations == 0) {
+        res.send({error:"Location not found"});
+        return;
+    }
+
 
     const id = req.params.id;
     let foundDevice = false;
