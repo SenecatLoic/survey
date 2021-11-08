@@ -3,11 +3,20 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { Device } from './component/Device';
+import { Survey } from './component/Survey';
+import { Location } from './component/Location';
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  <BrowserRouter>
+    <Routes>
+      <Route path="/" element={<App />} />
+      <Route path="/surveys" element={<Survey />} />
+      <Route path="/devices" element={<Device />} />
+      <Route path="/locations" element={<Location />} />
+    </Routes>
+  </BrowserRouter>,
   document.getElementById('root')
 );
 
