@@ -26,10 +26,11 @@ export function Device() {
   return (
     <div>
       <Header />
-      <Table>
+      Devices
+      <Table sx={{ maxWidth: "75%" }}>
         <TableBody>
           {devices.map((device: any) => (
-            <TableRow>
+            <TableRow key={device.id}>
               <TableCell>{device.id}</TableCell>
               <TableCell>{device.currentSurvey}</TableCell>
               <TableCell>{device.location}</TableCell>
