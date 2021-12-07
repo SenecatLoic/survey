@@ -118,7 +118,7 @@ app.post("/api/devices/update/:id", (req, res) => {
   let foundDevice = false;
   data.devices = data.devices.map((device) => {
     if (device.id == id && !foundDevice) {
-      device = { ...device, location, currentSurvey };
+      device = { ...device, locationId, currentSurvey };
       foundDevice = device;
     }
     return device;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Header } from "./Header";
-import { getDevices } from "../Provider/Device";
+import { getDevices, updateDevice } from "../Provider/Device";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import CloseIcon from "@mui/icons-material/Close";
@@ -15,6 +15,8 @@ import {
   TableRow,
   TextField,
 } from "@mui/material";
+import { getLocations } from "../Provider/Location";
+import { getSurveys } from "../Provider/Survey";
 
 const StyledContainer = styled("div")({
   display: "flex",
@@ -33,13 +35,9 @@ const StyledTitle = styled("div")({
   fontWeight: "bold",
 });
 
-const locationOptions = [
-  { label: "Texas", id: "122" },
-  { label: "Berlin Ouest", id: "123" },
-  { label: "Berlin Est", id: "124" },
-];
+let locationOptions: any[] = [];
 
-const surveyOptions = [{ label: "rqueu87878", id: "rqueu87878" }];
+let surveyOptions: any[] = [];
 
 export function Device() {
   const [devices, setdevices]: any[] = useState([]);
@@ -50,11 +48,19 @@ export function Device() {
       if (devices.length) {
         //à faire
       }
+      const locations = await getLocations();
+      locationOptions = locations.map((location: any)=>{
+        return { label:location.name, id: location.id };
+      });
+      const surveys = await getSurveys();
+      surveyOptions = surveys.map((survey: any)=>{
+        return { label:survey.name, id: survey.id} ;
+      });
       devices = devices.map((device: any) => {
         return {
           ...device,
           isEdit: false,
-          newLocation: "122",
+          newLocation: device.locationId,
           newSurvey: device.currentSurvey,
         };
       });
@@ -71,9 +77,12 @@ export function Device() {
             disablePortal
             id="combo-box-demo"
             options={surveyOptions}
-            value={device.newSurvey}
-            onChange={(event: any, newValue: string | null) => {
-              device.newSurvey = newValue;
+            defaultValue={(() => {
+              return surveyOptions.find((survey: any)=>{
+                return (survey.id === device.currentSurvey)})
+            })()}
+            onChange={(event: any, newValue: any) => {
+              device.newSurvey = newValue.id;
             }}
             renderInput={(params) => <TextField {...params} label="Survey" />}
           />
@@ -83,13 +92,12 @@ export function Device() {
             disablePortal
             id="combo-box-demo"
             options={locationOptions}
-            value={(() => {
-              return device.newLocation;
+            defaultValue={(() => {
+              return locationOptions.find((location: any)=>{
+                return (location.id === device.locationId)})
             })()}
-            onChange={(event: any, newValue: string | null) => {
-              console.log(event);
-              console.log(newValue);
-              device.newLocation = newValue;
+            onChange={(event: any, newValue: any) => {
+              device.newLocation = newValue.id;
             }}
             renderInput={(params) => <TextField {...params} label="Location" />}
           />
@@ -98,7 +106,7 @@ export function Device() {
           <IconButton
             onClick={() => {
               device.isEdit = false;
-              device.newLocation = device.location;
+              device.newLocation = device.locationId;
               device.newSurvey = device.currentSurvey;
               setdevices([...devices]);
             }}
@@ -108,9 +116,11 @@ export function Device() {
           <IconButton
             onClick={() => {
               device.isEdit = false;
-              device.location = device.newLocation;
+              device.locationId = device.newLocation;
               device.currentSurvey = device.newSurvey;
+              console.log(device);
               //update request device
+              updateDevice(device);
               setdevices([...devices]);
             }}
           >
@@ -122,11 +132,16 @@ export function Device() {
   };
 
   const displayMode = (device: any) => {
+    const survey = surveyOptions.find((survey: any)=>{
+      return (survey.id === device.currentSurvey)}) || "";
+    
+    const location = locationOptions.find((location: any)=>{
+      return (location.id === device.locationId)}) || "";
     return (
       <TableRow key={device.id}>
         <TableCell>{device.id}</TableCell>
-        <TableCell>{device.currentSurvey}</TableCell>
-        <TableCell>{device.location}</TableCell>
+        <TableCell>{survey.label}</TableCell>
+        <TableCell>{location.label}</TableCell>
         <TableCell style={{ width: 100 }}>
           <IconButton
             onClick={() => {
