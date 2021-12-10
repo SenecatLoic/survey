@@ -18,21 +18,22 @@ import {
 import { getLocations } from "../Provider/Location";
 import { getSurveys } from "../Provider/Survey";
 
-const StyledContainer = styled("div")({
+export const StyledContainer = styled("div")({
   display: "flex",
   justifyContent: "center",
   width: "100%",
 });
 
-const StyledStack = styled("div")({
+export const StyledStack = styled("div")({
   display: "flex",
   flexDirection: "column",
   width: "75%",
 });
 
-const StyledTitle = styled("div")({
-  fontSize: "calc(0.5em + 1vw)",
+export const StyledTitle = styled("div")({
+  fontSize: "calc(0.8em + 1vw)",
   fontWeight: "bold",
+  marginTop: "5%",
 });
 
 let locationOptions: any[] = [];
@@ -45,16 +46,13 @@ export function Device() {
   useEffect(() => {
     (async () => {
       let devices = await getDevices();
-      if (devices.length) {
-        //à faire
-      }
       const locations = await getLocations();
-      locationOptions = locations.map((location: any)=>{
-        return { label:location.name, id: location.id };
+      locationOptions = locations.map((location: any) => {
+        return { label: location.name, id: location.id };
       });
       const surveys = await getSurveys();
-      surveyOptions = surveys.map((survey: any)=>{
-        return { label:survey.name, id: survey.id} ;
+      surveyOptions = surveys.map((survey: any) => {
+        return { label: survey.name, id: survey.id };
       });
       devices = devices.map((device: any) => {
         return {
@@ -78,8 +76,9 @@ export function Device() {
             id="combo-box-demo"
             options={surveyOptions}
             defaultValue={(() => {
-              return surveyOptions.find((survey: any)=>{
-                return (survey.id === device.currentSurvey)})
+              return surveyOptions.find((survey: any) => {
+                return survey.id === device.currentSurvey;
+              });
             })()}
             onChange={(event: any, newValue: any) => {
               device.newSurvey = newValue.id;
@@ -93,8 +92,9 @@ export function Device() {
             id="combo-box-demo"
             options={locationOptions}
             defaultValue={(() => {
-              return locationOptions.find((location: any)=>{
-                return (location.id === device.locationId)})
+              return locationOptions.find((location: any) => {
+                return location.id === device.locationId;
+              });
             })()}
             onChange={(event: any, newValue: any) => {
               device.newLocation = newValue.id;
@@ -118,7 +118,7 @@ export function Device() {
               device.isEdit = false;
               device.locationId = device.newLocation;
               device.currentSurvey = device.newSurvey;
-              console.log(device);
+
               //update request device
               updateDevice(device);
               setdevices([...devices]);
@@ -132,11 +132,15 @@ export function Device() {
   };
 
   const displayMode = (device: any) => {
-    const survey = surveyOptions.find((survey: any)=>{
-      return (survey.id === device.currentSurvey)}) || "";
-    
-    const location = locationOptions.find((location: any)=>{
-      return (location.id === device.locationId)}) || "";
+    const survey =
+      surveyOptions.find((survey: any) => {
+        return survey.id === device.currentSurvey;
+      }) || "";
+
+    const location =
+      locationOptions.find((location: any) => {
+        return location.id === device.locationId;
+      }) || "";
     return (
       <TableRow key={device.id}>
         <TableCell>{device.id}</TableCell>
