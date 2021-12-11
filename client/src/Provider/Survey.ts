@@ -17,6 +17,7 @@ export async function updateSurvey(survey: any) {
           name: survey.name,
           dtcreation: survey.dtcreation,
           dtend: survey.dtend,
+          survey: survey.survey
         }),
       }
     );

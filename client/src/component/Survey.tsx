@@ -49,8 +49,8 @@ export function Survey() {
         <TableCell>
           <Input
             defaultValue={survey.name}
-            onChange={(newValue) => {
-              survey.newName = newValue;
+            onChange={(e) => {
+              survey.newName = e.target.value;
             }}
           />
         </TableCell>
@@ -60,13 +60,13 @@ export function Survey() {
               label="date"
               inputFormat="dd/MM/yyyy"
               value={new Date(survey.newDtCreation)}
-              onChange={(value) => {
+              onChange={(value: any) => {
                 if (value != null) {
                   survey.newDtCreation = value.getTime();
                   setsurveys([...surveys]);
                 }
               }}
-              renderInput={(params) => <TextField {...params} />}
+              renderInput={(params: any) => <TextField {...params} />}
             />
           </LocalizationProvider>
         </TableCell>
@@ -76,13 +76,13 @@ export function Survey() {
               label="date"
               inputFormat="dd/MM/yyyy"
               value={new Date(survey.newDtEnd)}
-              onChange={(value) => {
+              onChange={(value: any) => {
                 if (value != null) {
                   survey.newDtEnd = value.getTime();
                   setsurveys([...surveys]);
                 }
               }}
-              renderInput={(params) => <TextField {...params} />}
+              renderInput={(params: any) => <TextField {...params} />}
             />
           </LocalizationProvider>
         </TableCell>
@@ -106,8 +106,7 @@ export function Survey() {
               survey.dtend = survey.newDtEnd;
               survey.dtcreation = survey.newDtCreation;
               //update request survey
-
-              //updateSurvey(survey);
+              updateSurvey(survey);
               setsurveys([...surveys]);
             }}
           >
@@ -119,6 +118,7 @@ export function Survey() {
   };
 
   const displayMode = (survey: any) => {
+
     return (
       <TableRow key={survey.id}>
         <TableCell>{survey.id}</TableCell>
