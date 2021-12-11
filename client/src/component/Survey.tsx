@@ -19,6 +19,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import { getDateFormat } from "../tools/DateFormat";
 import DesktopDatePicker from "@mui/lab/DesktopDatePicker";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 export function Survey() {
   const [surveys, setsurveys]: any[] = useState([]);
@@ -121,6 +122,17 @@ export function Survey() {
 
     return (
       <TableRow key={survey.id}>
+        <TableCell>
+        <IconButton
+          onClick={()=>{
+
+          }
+          }
+        >
+          <VisibilityIcon/>
+        </IconButton>
+
+        </TableCell>
         <TableCell>{survey.id}</TableCell>
         <TableCell>{survey.name}</TableCell>
         <TableCell>{getDateFormat(new Date(survey.dtcreation))}</TableCell>
@@ -148,6 +160,7 @@ export function Survey() {
           <Table>
             <TableHead>
               <TableRow>
+                <TableCell style={{width: 50}}></TableCell>
                 <TableCell>Id</TableCell>
                 <TableCell>Name</TableCell>
                 <TableCell>Start date</TableCell>
