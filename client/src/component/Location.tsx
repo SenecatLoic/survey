@@ -6,34 +6,26 @@ import {
   TableRow,
   IconButton,
   Input,
-  styled,
+  TableHead,
 } from "@mui/material";
 import { useState, useEffect } from "react";
-import { getLocations, updateLocation } from "../Provider/Location";
+import {
+  getLocations,
+  updateLocation,
+  createLocation,
+} from "../Provider/Location";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import CloseIcon from "@mui/icons-material/Close";
+import AddIcon from "@mui/icons-material/Add";
 
-const StyledContainer = styled("div")({
-  display: "flex",
-  justifyContent: "center",
-  width: "100%",
-});
-
-const StyledStack = styled("div")({
-  display: "flex",
-  flexDirection: "column",
-  width: "75%",
-});
-
-const StyledTitle = styled("div")({
-  fontSize: "calc(0.5em + 1vw)",
-  fontWeight: "bold",
-  marginTop: "5%",
-});
+import { StyledContainer, StyledStack, StyledTitle } from "./Device";
 
 export function Location() {
   const [locations, setLocations]: any[] = useState([]);
+  const [newLocation, setNewLocation]: any[] = useState({});
+  const [createNewLocation, setCreateNewLocation]: any[] = useState(false);
+
   useEffect(() => {
     (async () => {
       let locations = await getLocations();
@@ -116,10 +108,70 @@ export function Location() {
         <StyledStack>
           <StyledTitle>Locations</StyledTitle>
           <Table sx={{ maxWidth: "75%" }}>
+            <TableHead>
+              <TableRow>
+                <TableCell>Id</TableCell>
+                <TableCell>Location</TableCell>
+                <TableCell style={{ width: 100 }}></TableCell>
+              </TableRow>
+            </TableHead>
             <TableBody>
               {locations.map((location: any) =>
                 location.isEdit ? editMode(location) : watchMode(location)
               )}
+              <TableRow>
+                <TableCell></TableCell>
+                <TableCell>
+                  {createNewLocation ? (
+                    <Input
+                      onChange={(e) => {
+                        newLocation.name = e.target.value;
+                        setNewLocation(newLocation);
+                      }}
+                    />
+                  ) : (
+                    ""
+                  )}
+                </TableCell>
+                <TableCell>
+                  {createNewLocation ? (
+                    <>
+                      <IconButton
+                        color={"primary"}
+                        onClick={async () => {
+                          const result = await createLocation(newLocation);
+                          if (result && !result.error) {
+                            locations.push(result);
+                            setLocations([...locations]);
+                            setCreateNewLocation(false);
+                          }
+                        }}
+                      >
+                        <SaveIcon />
+                      </IconButton>
+                      <IconButton
+                        color={"secondary"}
+                        onClick={() => {
+                          setNewLocation({});
+                          setCreateNewLocation(false);
+                        }}
+                      >
+                        <CloseIcon />
+                      </IconButton>
+                    </>
+                  ) : (
+                    <IconButton
+                      color={"primary"}
+                      onClick={() => {
+                        setCreateNewLocation(true);
+                      }}
+                    >
+                      {" "}
+                      <AddIcon />
+                    </IconButton>
+                  )}
+                </TableCell>
+              </TableRow>
             </TableBody>
           </Table>
         </StyledStack>
