@@ -2,29 +2,43 @@ import { styled } from "@mui/material";
 import "./App.css";
 import { Header } from "./component/Header";
 import ChartJS from "chart.js/auto";
-import { Doughnut, Line, Bar } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 import "chartjs-adapter-moment";
+import { StyledContainer, StyledStack, StyledTitle } from "./component/Device";
+import { useEffect, useState } from "react";
+import { getSurveys } from "./Provider/Survey";
 ChartJS.register();
 
-const StyledContainer = styled("div")({
-  display: "flex",
-  justifyContent: "center",
-  width: "100%",
-});
+function rdmIntIntrvl(min: number, max: number): number {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
 
-const StyledStack = styled("div")({
-  display: "flex",
-  flexDirection: "column",
-  width: "75%",
-});
+function random8bitNum() {
+  return rdmIntIntrvl(1, 255);
+}
 
-const StyledTitle = styled("div")({
-  fontSize: "calc(0.5em + 1vw)",
-  fontWeight: "bold",
-  marginTop: "5%",
+function randomColor(alpha: number): string {
+  const r = rdmIntIntrvl(1, 3);
+  return `rgba(${r === 1 ? 255 : random8bitNum()}, ${
+    r === 2 ? 255 : random8bitNum()
+  }, ${r === 3 ? 255 : random8bitNum()}, ${alpha})`;
+}
+
+const StyledBar = styled(Bar)({
+  marginBottom: "20vh",
 });
 
 function App() {
+  const [surveys, setSurveys]: any[] = useState([]);
+  useEffect(() => {
+    (async () => {
+      let surveys = await getSurveys();
+      if (surveys.length) {
+        //todo
+      }
+      setSurveys(surveys);
+    })();
+  }, []);
   const client = new WebSocket("ws://localhost:3000");
   client.addEventListener("open", () => {
     // Causes the server to print "Hello"
@@ -35,57 +49,72 @@ function App() {
     const data = JSON.parse(msg.data);
     console.log(data);
   });
-  const survey = {
-    id: "rqueu87878",
-    name: "SIDA",
-    dtcreation: 8248768732,
-    dtend: 9284938578735,
-    survey: {
-      question: "Avez-vous le sida ?",
-      answers: ["oui", "non", "peut-etre"],
-    },
-    data: [
-      { device: "oue8495", answerId: 2, dtanswer: 43573953545 },
-      { device: "coeuouoe", answerId: 1, dtanswer: 43573993545 },
-      { device: "ouoeurch", answerId: 0, dtanswer: 43579993545 },
-    ],
-  };
+  // const survey = {
+  //   id: "rqueu87878",
+  //   name: "SIDA",
+  //   dtcreation: 8248768732,
+  //   dtend: 9284938578735,
+  //   survey: {
+  //     question: "Avez-vous le sida ?",
+  //     answers: ["oui", "non", "peut-etre"],
+  //   },
+  //   data: [
+  // { device: "oue8495", answerId: 2, dtanswer: 43573953545 },
+  // { device: "coeuouoe", answerId: 1, dtanswer: 43573993545 },
+  // { device: "ouoeurch", answerId: 0, dtanswer: 43579993545 },
+  //   ],
+  // };
 
   return (
     <div>
       <Header />
       <StyledContainer>
         <StyledStack>
-          <StyledTitle>Dashboard</StyledTitle>
-          <Bar
-            data={{
-              labels: survey.survey.answers,
-              datasets: [
-                {
-                  label: "Votes",
-                  data: [1, 2, 3],
-                  backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                ],
-                borderWidth: 1
-            }
-              ],
-            }}
-            options={{
-              scales: {
-                  y: {
-                      beginAtZero: true
-                  }
-              }
-          }}
-          />
+          <StyledTitle sx={{ marginBottom: "30px" }}>Dashboard</StyledTitle>
+          {surveys.map((survey: any) =>
+            survey.data.length ? (
+              <StyledBar
+                data={{
+                  labels: survey.survey.answers,
+                  datasets: [
+                    {
+                      label: "Votes",
+                      data: survey.data.map((d: any) => d.answerId),
+                      backgroundColor: [
+                        randomColor(0.2),
+                        randomColor(0.2),
+                        randomColor(0.2),
+                      ],
+                      borderColor: [
+                        randomColor(1),
+                        randomColor(1),
+                        randomColor(1),
+                      ],
+                      borderWidth: 1,
+                    },
+                  ],
+                }}
+                options={{
+                  plugins: {
+                    title: {
+                      display: true,
+                      text: survey.name,
+                    },
+                    legend: {
+                      display: false,
+                    },
+                  },
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                    },
+                  },
+                }}
+              />
+            ) : (
+              ""
+            )
+          )}
         </StyledStack>
       </StyledContainer>
     </div>
