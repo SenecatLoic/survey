@@ -6,6 +6,7 @@ app.use(cors());
 const wsServer = new ws.Server({ noServer: true });
 const fs = require("fs");
 const uuid = require("uuid").v4;
+const { send } = require("process");
 
 const data = JSON.parse(fs.readFileSync("./data.json"));
 
@@ -215,6 +216,41 @@ app.post("/api/surveys/update/:id", (req, res) => {
     res.send({ error: "Survey not found." });
   } else {
     res.send(foundSurvey);
+  }
+});
+
+app.get("/api/surveys/answer/:device/:answer",(req, res) =>{
+  let foundSurvey, foundDevice;
+  //console.log(data.surveys);
+  const current_device = data.devices.filter((elem) => elem.id == req.params.device);
+  if(current_device.length == 1){
+    const survey = data.surveys.map((elem, i) => {
+      if(elem.id == current_device[0].currentSurvey){
+        return i;
+      }
+    });
+
+    const idx = survey[1];
+    console.log(idx);
+    if(data.surveys[idx]){
+      const answer = {
+        device: req.params.device,
+        answerId: parseInt(req.params.answer),
+        dtanswer: new Date().getTime(),
+      };
+
+      data.surveys[idx].data.push(answer);
+    }
+    foundSurvey = data.surveys[idx];
+  }
+  foundDevice = current_device[0];
+
+  //console.log(data.surveys);
+
+  if(foundDevice && foundSurvey){
+    res.send();
+  }else{
+    res.send({ error: "Device or Survey not found." });
   }
 });
 

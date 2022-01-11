@@ -36,6 +36,7 @@ function App() {
       if (surveys.length) {
         //todo
       }
+      console.log(surveys);
       setSurveys(surveys);
     })();
   }, []);
@@ -98,7 +99,7 @@ function App() {
                   plugins: {
                     title: {
                       display: true,
-                      text: survey.name,
+                      text: survey.name + " (" + survey.survey.question + ")",
                     },
                     legend: {
                       display: false,
