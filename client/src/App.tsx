@@ -36,7 +36,6 @@ function App() {
       if (surveys.length) {
         //todo
       }
-      console.log(surveys);
       setSurveys(surveys);
     })();
   }, []);
@@ -50,21 +49,6 @@ function App() {
     const data = JSON.parse(msg.data);
     console.log(data);
   });
-  // const survey = {
-  //   id: "rqueu87878",
-  //   name: "SIDA",
-  //   dtcreation: 8248768732,
-  //   dtend: 9284938578735,
-  //   survey: {
-  //     question: "Avez-vous le sida ?",
-  //     answers: ["oui", "non", "peut-etre"],
-  //   },
-  //   data: [
-  // { device: "oue8495", answerId: 2, dtanswer: 43573953545 },
-  // { device: "coeuouoe", answerId: 1, dtanswer: 43573993545 },
-  // { device: "ouoeurch", answerId: 0, dtanswer: 43579993545 },
-  //   ],
-  // };
 
   return (
     <div>
@@ -75,12 +59,19 @@ function App() {
           {surveys.map((survey: any) =>
             survey.data.length ? (
               <StyledBar
+                key={survey.id}
                 data={{
                   labels: survey.survey.answers,
                   datasets: [
                     {
                       label: "Votes",
-                      data: survey.data.map((d: any) => d.answerId),
+                      data: survey.data.reduce(
+                        (acc: number[], curr: any) => {
+                          acc[curr.answerId] = acc[curr.answerId] + 1;
+                          return [...acc];
+                        },
+                        [0, 0, 0]
+                      ),
                       backgroundColor: [
                         randomColor(0.2),
                         randomColor(0.2),
