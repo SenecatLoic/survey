@@ -256,6 +256,40 @@ app.get("/api/surveys/answer/:device/:answer", (req, res) => {
   }
 });
 
+app.get("api/feed", (req, res) => {
+  let foundSurvey, foundDevice;
+  const { data: dataReq, time, device, deviceTypeId } = req.params;
+
+  /*
+  const current_device = data.devices.filter((elem) => elem.id == device);
+  if (current_device.length == 1) {
+    const survey = data.surveys.map((elem, i) => {
+      if (elem.id == current_device[0].currentSurvey) {
+        return i;
+      }
+    });
+    const idx = survey[1];
+
+    if (data.surveys[idx]) {
+      const answer = {
+        device: req.params.device,
+        answerId: parseInt(req.params.answer),
+        dtanswer: new Date().getTime(),
+      };
+
+      data.surveys[idx].data.push(answer);
+    }
+    foundSurvey = data.surveys[idx];
+  }
+  foundDevice = current_device[0];
+
+  if (foundDevice && foundSurvey) {
+    res.send();
+  } else {
+    res.send({ error: "Device or Survey not found." });
+  }*/
+});
+
 server = app.listen(process.env.PORT || 3000);
 
 server.on("upgrade", (req, socket, head) => {
