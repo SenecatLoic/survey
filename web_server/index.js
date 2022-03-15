@@ -219,20 +219,22 @@ app.post("/api/surveys/update/:id", (req, res) => {
   }
 });
 
-app.get("/api/surveys/answer/:device/:answer",(req, res) =>{
+app.get("/api/surveys/answer/:device/:answer", (req, res) => {
   let foundSurvey, foundDevice;
   //console.log(data.surveys);
-  const current_device = data.devices.filter((elem) => elem.id == req.params.device);
-  if(current_device.length == 1){
+  const current_device = data.devices.filter(
+    (elem) => elem.id == req.params.device
+  );
+  if (current_device.length == 1) {
     const survey = data.surveys.map((elem, i) => {
-      if(elem.id == current_device[0].currentSurvey){
+      if (elem.id == current_device[0].currentSurvey) {
         return i;
       }
     });
 
     const idx = survey[1];
     console.log(idx);
-    if(data.surveys[idx]){
+    if (data.surveys[idx]) {
       const answer = {
         device: req.params.device,
         answerId: parseInt(req.params.answer),
@@ -247,14 +249,14 @@ app.get("/api/surveys/answer/:device/:answer",(req, res) =>{
 
   //console.log(data.surveys);
 
-  if(foundDevice && foundSurvey){
+  if (foundDevice && foundSurvey) {
     res.send();
-  }else{
+  } else {
     res.send({ error: "Device or Survey not found." });
   }
 });
 
-server = app.listen(3000);
+server = app.listen(process.env.PORT || 3000);
 
 server.on("upgrade", (req, socket, head) => {
   wsServer.handleUpgrade(req, socket, head, (socket) => {
