@@ -19,7 +19,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import { getDateFormat } from "../tools/DateFormat";
 import DesktopDatePicker from "@mui/lab/DesktopDatePicker";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
-import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
 export function Survey() {
   const [surveys, setsurveys]: any[] = useState([]);
@@ -87,7 +87,7 @@ export function Survey() {
             />
           </LocalizationProvider>
         </TableCell>
-        <TableCell style={{ width: 100 }}>
+        <TableCell /*style={{ width: 100 }}*/>
           <IconButton
             onClick={() => {
               survey.isEdit = false;
@@ -99,6 +99,7 @@ export function Survey() {
           >
             <CloseIcon />
           </IconButton>
+          http://localhost:3001/
           <IconButton
             onClick={() => {
               survey.isEdit = false;
@@ -119,25 +120,18 @@ export function Survey() {
   };
 
   const displayMode = (survey: any) => {
-
     return (
       <TableRow key={survey.id}>
         <TableCell>
-        <IconButton
-          onClick={()=>{
-
-          }
-          }
-        >
-          <VisibilityIcon/>
-        </IconButton>
-
+          <IconButton onClick={() => {}}>
+            <VisibilityIcon />
+          </IconButton>
         </TableCell>
         <TableCell>{survey.id}</TableCell>
         <TableCell>{survey.name}</TableCell>
         <TableCell>{getDateFormat(new Date(survey.dtcreation))}</TableCell>
         <TableCell>{getDateFormat(new Date(survey.dtend))}</TableCell>
-        <TableCell style={{ width: 100 }}>
+        <TableCell /*style={{ width: 100 }}*/>
           <IconButton
             onClick={() => {
               survey.isEdit = true;
@@ -157,15 +151,16 @@ export function Survey() {
       <StyledContainer>
         <StyledStack>
           <StyledTitle>Surveys</StyledTitle>
-          <Table>
+          <Table sx={{ maxWidth: "75%" }}>
             <TableHead>
               <TableRow>
-                <TableCell style={{width: 50}}></TableCell>
+                <TableCell /*style={{ width: 50 }}*/></TableCell>
                 <TableCell>Id</TableCell>
                 <TableCell>Name</TableCell>
                 <TableCell>Start date</TableCell>
                 <TableCell>End date</TableCell>
-                <TableCell style={{ width: 100 }}></TableCell>
+                <TableCell /*style={{ width: 50 }}style={{ width: 100 }}*/
+                ></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>

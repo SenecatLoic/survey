@@ -73,9 +73,9 @@ function App() {
                         [0, 0, 0]
                       ),
                       backgroundColor: [
-                        randomColor(0.2),
-                        randomColor(0.2),
-                        randomColor(0.2),
+                        randomColor(0.5),
+                        randomColor(0.5),
+                        randomColor(0.5),
                       ],
                       borderColor: [
                         randomColor(1),
