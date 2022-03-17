@@ -39,7 +39,9 @@ function App() {
       setSurveys(surveys);
     })();
   }, []);
-  const client = new WebSocket("ws://localhost:3000");
+  const client = new WebSocket(
+    `ws://${process.env.REACT_APP_SERVEUR}:${process.env.PORT}`
+  );
   client.addEventListener("open", () => {
     // Causes the server to print "Hello"
     client.send("Hello");

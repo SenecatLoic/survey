@@ -99,7 +99,7 @@ export function Survey() {
           >
             <CloseIcon />
           </IconButton>
-          http://localhost:3001/
+
           <IconButton
             onClick={() => {
               survey.isEdit = false;
