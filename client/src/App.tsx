@@ -39,7 +39,7 @@ function App() {
       setSurveys(surveys);
     })();
   }, []);
-  const client = new WebSocket(
+  /*const client = new WebSocket(
     `ws://${process.env.REACT_APP_SERVEUR}:${process.env.PORT}`
   );
   client.addEventListener("open", () => {
@@ -50,7 +50,7 @@ function App() {
   client.addEventListener("message", (msg) => {
     const data = JSON.parse(msg.data);
     console.log(data);
-  });
+  });*/
 
   return (
     <div>

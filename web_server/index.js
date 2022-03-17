@@ -257,7 +257,7 @@ app.get("/api/surveys/answer/:device/:answer", (req, res) => {
   }
 });
 
-app.get("api/feed", (req, res) => {
+app.get("/api/feed", (req, res) => {
   let foundSurvey, foundDevice;
   const { data: dataReq, time, device, deviceTypeId } = req.params;
 
