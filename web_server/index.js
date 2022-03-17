@@ -7,6 +7,7 @@ const wsServer = new ws.Server({ noServer: true });
 const fs = require("fs");
 const uuid = require("uuid").v4;
 const { send } = require("process");
+const path = require("path");
 
 const data = JSON.parse(fs.readFileSync("./data.json"));
 
@@ -275,7 +276,7 @@ app.get("api/feed", (req, res) => {
         device: req.params.device,
         answerId: parseInt(req.params.answer),
         dtanswer: new Date().getTime(),
-      };
+      };app.use(express.static)
 
       data.surveys[idx].data.push(answer);
     }
@@ -296,4 +297,10 @@ server.on("upgrade", (req, socket, head) => {
   wsServer.handleUpgrade(req, socket, head, (socket) => {
     wsServer.emit("connection", socket, req);
   });
+});
+
+app.use(express.static(path.join(__dirname, "../client", "build")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../client", "build", "index.html"));
 });
