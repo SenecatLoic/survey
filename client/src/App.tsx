@@ -7,6 +7,7 @@ import "chartjs-adapter-moment";
 import { StyledContainer, StyledStack, StyledTitle } from "./component/Device";
 import { useEffect, useState } from "react";
 import { getSurveys } from "./Provider/Survey";
+import { io } from "socket.io-client";
 ChartJS.register();
 
 function rdmIntIntrvl(min: number, max: number): number {
@@ -40,12 +41,25 @@ function App() {
     })();
   }, []);
   console.log(
-    `ws://${process.env.REACT_APP_SERVEUR}:${process.env.PORT || 3000}`
+    `ws://${process.env.REACT_HOST_NAME}:${process.env.PORT || 3000}`
   );
-  const client = new WebSocket(
-    `ws://${process.env.REACT_APP_SERVEUR}:${process.env.PORT || 3000}`
-  );
-  client.addEventListener("open", () => {
+
+  console.log(process.env);
+
+  /*const client = new WebSocket(
+    `ws://${process.env.REACT_HOST_NAME}:${process.env.PORT || 3000}`
+  );*/
+
+  const socket = io(`${process.env.REACT_APP_SERVEUR}`);
+
+  socket.send("hello", (response: any) => {
+    console.log(response);
+  });
+  socket.on("open", () => {
+    socket.send("Hello");
+  });
+
+  /*client.addEventListener("open", () => {
     // Causes the server to print "Hello"
     client.send("Hello");
   });
@@ -53,7 +67,7 @@ function App() {
   client.addEventListener("message", (msg) => {
     const data = JSON.parse(msg.data);
     console.log(data);
-  });
+  });*/
 
   return (
     <div>

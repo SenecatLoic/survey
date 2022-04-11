@@ -5,7 +5,7 @@ export const getDevices = getAll("/api/devices");
 export async function updateDevice(device: any) {
   try {
     const response = await fetch(
-      `https://${process.env.REACT_APP_SERVEUR}/api/devices/update/${device.id}`,
+      `${process.env.REACT_APP_SERVEUR}/api/devices/update/${device.id}`,
       {
         method: "POST",
         headers: {

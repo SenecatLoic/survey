@@ -4,7 +4,7 @@ export const getLocations = getAll("/api/locations");
 export async function updateLocation(location: any) {
   try {
     const response = await fetch(
-      `https://${process.env.REACT_APP_SERVEUR}/api/locations/update/${location.id}`,
+      `${process.env.REACT_APP_SERVEUR}/api/locations/update/${location.id}`,
       {
         method: "POST",
         headers: {
@@ -25,7 +25,7 @@ export async function updateLocation(location: any) {
 export async function createLocation(location: any) {
   try {
     const response = await fetch(
-      `https://${process.env.REACT_APP_SERVEUR}/api/locations/create`,
+      `${process.env.REACT_APP_SERVEUR}/api/locations/create`,
       {
         method: "POST",
         headers: {

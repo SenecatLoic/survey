@@ -8,6 +8,7 @@ const fs = require("fs");
 const uuid = require("uuid").v4;
 const { send } = require("process");
 const path = require("path");
+const socketIO = require("socket.io");
 
 const data = JSON.parse(fs.readFileSync("./data.json"));
 
@@ -15,11 +16,11 @@ setInterval(() => {
   fs.writeFile("./data.json", JSON.stringify(data), (err) => {});
 }, 10000);
 
-wsServer.on("connection", (socket) => {
+/*wsServer.on("connection", (socket) => {
   socket.on("message", (msg) => {
     console.log(String(msg));
   });
-});
+});*/
 // req, res, data, errorMsg
 const findByIdAndSend = (req, res) => {
   const { data, errorMsg } = req.dataFindByIdAndSend;
@@ -291,13 +292,26 @@ app.get("/api/feed", (req, res) => {
   }*/
 });
 
-server = app.listen(process.env.PORT || 3000);
+server = app.listen(process.env.PORT || 3000, () => console.log("listening"));
 
-server.on("upgrade", (req, socket, head) => {
+const io = socketIO(server);
+
+io.on("connection", (socket) => {
+  console.log("CLient connected");
+  socket.on("message", (msg) => {
+    console.log(String(msg));
+  });
+  socket.on("hello", (arg, callback) => {
+    console.log(arg);
+    callback("got it");
+  });
+});
+
+/*server.on("upgrade", (req, socket, head) => {
   wsServer.handleUpgrade(req, socket, head, (socket) => {
     wsServer.emit("connection", socket, req);
   });
-});
+});*/
 
 app.use(express.static(path.join(__dirname, "../client", "build")));
 

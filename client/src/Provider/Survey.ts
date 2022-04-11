@@ -5,7 +5,7 @@ export const getSurveys = getAll("/api/surveys");
 export async function updateSurvey(survey: any) {
   try {
     const response = await fetch(
-      `https://${process.env.REACT_APP_SERVEUR}/api/surveys/update/${survey.id}`,
+      `${process.env.REACT_APP_SERVEUR}/api/surveys/update/${survey.id}`,
       {
         method: "POST",
         headers: {
