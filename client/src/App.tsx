@@ -39,8 +39,11 @@ function App() {
       setSurveys(surveys);
     })();
   }, []);
-  /*const client = new WebSocket(
-    `ws://${process.env.REACT_APP_SERVEUR}:${process.env.PORT}`
+  console.log(
+    `ws://${process.env.REACT_APP_SERVEUR}:${process.env.PORT || 3000}`
+  );
+  const client = new WebSocket(
+    `ws://${process.env.REACT_APP_SERVEUR}:${process.env.PORT || 3000}`
   );
   client.addEventListener("open", () => {
     // Causes the server to print "Hello"
@@ -50,7 +53,7 @@ function App() {
   client.addEventListener("message", (msg) => {
     const data = JSON.parse(msg.data);
     console.log(data);
-  });*/
+  });
 
   return (
     <div>
