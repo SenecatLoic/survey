@@ -297,7 +297,7 @@ app.get("/api/feed", async (req, res) => {
       const sockets = await io.fetchSockets();
   
       for(const socket of sockets){
-        socket.emit("vote", answers);
+        socket.emit("vote", {survey: data.surveys[idx].id, answers: answers});
       }
     }
   }else{
