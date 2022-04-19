@@ -294,13 +294,14 @@ app.get("/api/feed", async (req, res) => {
       });
 
       data.surveys[idx].data = [...data.surveys[idx].data, ...answers];
-    }
-  }
-
-  const sockets = await io.fetchSockets();
+      const sockets = await io.fetchSockets();
   
-  for(const socket of sockets){
-    socket.emit("vote", answers);
+      for(const socket of sockets){
+        socket.emit("vote", answers);
+      }
+    }
+  }else{
+    data.devices.push({id: device, location: "", currentSurvey: "", locationId: ""});
   }
   
   res.send("ok");
