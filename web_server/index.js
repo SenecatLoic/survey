@@ -32,6 +32,21 @@ const findByIdAndSend = (req, res) => {
   }
 };
 
+server = app.listen(process.env.PORT || 3000, () => console.log("listening"));
+
+const io = socketIO(server);
+
+io.on("connection", (socket) => {
+  console.log("CLient connected");
+  socket.on("message", (msg) => {
+    console.log(String(msg));
+  });
+  socket.on("hello", (arg, callback) => {
+    console.log(arg);
+    callback("got it");
+  });
+});
+
 app.use(express.json());
 
 app.get("/api/locations", (req, res) => {
@@ -80,11 +95,6 @@ app.post("/api/locations/update/:id", (req, res) => {
 
 app.get("/api/devices", (req, res) => {
   res.send(data.devices);
-  // wsServer.clients.forEach(clientSock=>{
-  //     if(clientSock.readyState == ws.WebSocket.OPEN) {
-  //         clientSock.send(JSON.stringify({data:"hello"}));
-  //     }
-  // })
 });
 
 app.get(
@@ -249,8 +259,6 @@ app.get("/api/surveys/answer/:device/:answer", (req, res) => {
   }
   foundDevice = current_device[0];
 
-  //console.log(data.surveys);
-
   if (foundDevice && foundSurvey) {
     res.send();
   } else {
@@ -258,12 +266,16 @@ app.get("/api/surveys/answer/:device/:answer", (req, res) => {
   }
 });
 
-app.get("/api/feed", (req, res) => {
-  let foundSurvey, foundDevice;
-  const { data: dataReq, time, device, deviceTypeId } = req.params;
-
-  /*
+app.get("/api/feed", async (req, res) => {
+  const { data: dataReq, time, device } = req.query;
+  
+  const voteChar = [];
+  for(let i = 0; i < dataReq.length; i+=2){
+   voteChar.push(parseInt(dataReq[i] + dataReq[i+1], 10) - 30);
+  }
+  
   const current_device = data.devices.filter((elem) => elem.id == device);
+  const answers = [];
   if (current_device.length == 1) {
     const survey = data.surveys.map((elem, i) => {
       if (elem.id == current_device[0].currentSurvey) {
@@ -273,45 +285,26 @@ app.get("/api/feed", (req, res) => {
     const idx = survey[1];
 
     if (data.surveys[idx]) {
-      const answer = {
-        device: req.params.device,
-        answerId: parseInt(req.params.answer),
-        dtanswer: new Date().getTime(),
-      };app.use(express.static)
+      voteChar.forEach((vote)=>{
+        answers.push({
+          device: device,
+          answerId: vote,
+          dtanswer: time,
+        });
+      });
 
-      data.surveys[idx].data.push(answer);
+      data.surveys[idx].data = [...data.surveys[idx].data, ...answers];
     }
-    foundSurvey = data.surveys[idx];
   }
-  foundDevice = current_device[0];
 
-  if (foundDevice && foundSurvey) {
-    res.send();
-  } else {
-    res.send({ error: "Device or Survey not found." });
-  }*/
+  const sockets = await io.fetchSockets();
+  
+  for(const socket of sockets){
+    socket.emit("vote", answers);
+  }
+  
+  res.send("ok");
 });
-
-server = app.listen(process.env.PORT || 3000, () => console.log("listening"));
-
-const io = socketIO(server);
-
-io.on("connection", (socket) => {
-  console.log("CLient connected");
-  socket.on("message", (msg) => {
-    console.log(String(msg));
-  });
-  socket.on("hello", (arg, callback) => {
-    console.log(arg);
-    callback("got it");
-  });
-});
-
-/*server.on("upgrade", (req, socket, head) => {
-  wsServer.handleUpgrade(req, socket, head, (socket) => {
-    wsServer.emit("connection", socket, req);
-  });
-});*/
 
 app.use(express.static(path.join(__dirname, "../client", "build")));
 

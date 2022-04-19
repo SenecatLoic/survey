@@ -9,7 +9,7 @@ import {
   TextField,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { getSurveys, updateSurvey } from "../Provider/Survey";
+import { createSurvey, getSurveys, updateSurvey } from "../Provider/Survey";
 import { StyledContainer, StyledStack, StyledTitle } from "./Device";
 import { Header } from "./Header";
 import EditIcon from "@mui/icons-material/Edit";
@@ -20,9 +20,12 @@ import { getDateFormat } from "../tools/DateFormat";
 import DesktopDatePicker from "@mui/lab/DesktopDatePicker";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import AddIcon from "@mui/icons-material/Add";
 
 export function Survey() {
   const [surveys, setsurveys]: any[] = useState([]);
+  let [newSurvey, setNewSurvey]: any[] = useState({});
+  const [createNewSurvey, setCreateNewSurvey]: any[] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -159,8 +162,7 @@ export function Survey() {
                 <TableCell>Name</TableCell>
                 <TableCell>Start date</TableCell>
                 <TableCell>End date</TableCell>
-                <TableCell /*style={{ width: 50 }}style={{ width: 100 }}*/
-                ></TableCell>
+                <TableCell /*style={{ width: 50 }}style={{ width: 100 }}*/></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -168,6 +170,88 @@ export function Survey() {
                 if (survey.isEdit) return editMode(survey);
                 else return displayMode(survey);
               })}
+              <TableRow>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
+                <TableCell>
+                  <Input
+                    onChange={(event) => {
+                      newSurvey = event.target.value;
+                      setNewSurvey(newSurvey);
+                    }}
+                  />
+                </TableCell>
+                <TableCell>
+                  <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <DesktopDatePicker
+                      label="date"
+                      inputFormat="dd/MM/yyyy"
+                      value={newSurvey.dtcreation || new Date(newSurvey.dtcreation)}
+                      onChange={(value: any) => {
+                        if (value != null) {
+                          newSurvey.dtcreation = value.getTime();
+                          setsurveys([...surveys]);
+                        }
+                      }}
+                      renderInput={(params: any) => <TextField {...params} />}
+                    />
+                  </LocalizationProvider>
+                </TableCell>
+                <TableCell>
+                  <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <DesktopDatePicker
+                      label="date"
+                      inputFormat="dd/MM/yyyy"
+                      value={newSurvey.dtend || new Date(newSurvey.dtend)}
+                      onChange={(value: any) => {
+                        if (value != null) {
+                          newSurvey.dtend = value.getTime();
+                          setsurveys([...surveys]);
+                        }
+                      }}
+                      renderInput={(params: any) => <TextField {...params} />}
+                    />
+                  </LocalizationProvider>
+                </TableCell>
+                <TableCell>
+                  {createNewSurvey ? (
+                    <>
+                      <IconButton
+                        color={"primary"}
+                        onClick={async () => {
+                          const result = await createSurvey(newSurvey);
+                          if (result && !result.error) {
+                            surveys.push(result);
+                            setsurveys([...surveys]);
+                            setCreateNewSurvey(false);
+                          }
+                        }}
+                      >
+                        <SaveIcon />
+                      </IconButton>
+                      <IconButton
+                        color={"secondary"}
+                        onClick={() => {
+                          setNewSurvey({});
+                          setCreateNewSurvey(false);
+                        }}
+                      >
+                        <CloseIcon />
+                      </IconButton>
+                    </>
+                  ) : (
+                    <IconButton
+                      color={"primary"}
+                      onClick={() => {
+                        setCreateNewSurvey(true);
+                      }}
+                    >
+                      {" "}
+                      <AddIcon />
+                    </IconButton>
+                  )}
+                </TableCell>
+              </TableRow>
             </TableBody>
           </Table>
         </StyledStack>

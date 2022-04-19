@@ -20,9 +20,9 @@ function random8bitNum() {
 
 function randomColor(alpha: number): string {
   const r = rdmIntIntrvl(1, 3);
-  return `rgba(${r === 1 ? 255 : random8bitNum()}, ${
-    r === 2 ? 255 : random8bitNum()
-  }, ${r === 3 ? 255 : random8bitNum()}, ${alpha})`;
+  return `rgba(${r === 1 ? 255 : random8bitNum()}, ${r === 2 ? 255 : random8bitNum()}, ${
+    r === 3 ? 255 : random8bitNum()
+  }, ${alpha})`;
 }
 
 const StyledBar = styled(Bar)({
@@ -32,6 +32,15 @@ const StyledBar = styled(Bar)({
 function App() {
   const [surveys, setSurveys]: any[] = useState([]);
   useEffect(() => {
+    const socket = io(`${process.env.REACT_APP_SERVEUR}`);
+
+    socket.send("hello", (response: any) => {
+      console.log(response);
+    });
+    socket.on("vote", (res, callback) => {
+      console.log(res);
+    });
+
     (async () => {
       let surveys = await getSurveys();
       if (surveys.length) {
@@ -40,34 +49,6 @@ function App() {
       setSurveys(surveys);
     })();
   }, []);
-  console.log(
-    `ws://${process.env.REACT_HOST_NAME}:${process.env.PORT || 3000}`
-  );
-
-  console.log(process.env);
-
-  /*const client = new WebSocket(
-    `ws://${process.env.REACT_HOST_NAME}:${process.env.PORT || 3000}`
-  );*/
-
-  const socket = io(`${process.env.REACT_APP_SERVEUR}`);
-
-  socket.send("hello", (response: any) => {
-    console.log(response);
-  });
-  socket.on("open", () => {
-    socket.send("Hello");
-  });
-
-  /*client.addEventListener("open", () => {
-    // Causes the server to print "Hello"
-    client.send("Hello");
-  });
-
-  client.addEventListener("message", (msg) => {
-    const data = JSON.parse(msg.data);
-    console.log(data);
-  });*/
 
   return (
     <div>
@@ -91,16 +72,8 @@ function App() {
                         },
                         [0, 0, 0]
                       ),
-                      backgroundColor: [
-                        randomColor(0.5),
-                        randomColor(0.5),
-                        randomColor(0.5),
-                      ],
-                      borderColor: [
-                        randomColor(1),
-                        randomColor(1),
-                        randomColor(1),
-                      ],
+                      backgroundColor: [randomColor(0.5), randomColor(0.5), randomColor(0.5)],
+                      borderColor: [randomColor(1), randomColor(1), randomColor(1)],
                       borderWidth: 1,
                     },
                   ],
