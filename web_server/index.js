@@ -277,12 +277,9 @@ app.get("/api/feed", async (req, res) => {
   const current_device = data.devices.filter((elem) => elem.id == device);
   const answers = [];
   if (current_device.length == 1) {
-    const survey = data.surveys.map((elem, i) => {
-      if (elem.id == current_device[0].currentSurvey) {
-        return i;
-      }
+    const idx = data.surveys.findIndex((elem)=>{
+      return (elem.id == current_device[0].currentSurvey);
     });
-    const idx = survey[1];
 
     if (data.surveys[idx]) {
       voteChar.forEach((vote)=>{
@@ -292,7 +289,7 @@ app.get("/api/feed", async (req, res) => {
           dtanswer: time,
         });
       });
-
+      
       data.surveys[idx].data = [...data.surveys[idx].data, ...answers];
       const sockets = await io.fetchSockets();
   
@@ -302,6 +299,11 @@ app.get("/api/feed", async (req, res) => {
     }
   }else{
     data.devices.push({id: device, location: "", currentSurvey: "", locationId: ""});
+    const sockets = await io.fetchSockets();
+  
+    for(const socket of sockets){
+      socket.emit("device", {id: device, location: "", currentSurvey: "", locationId: ""});
+    }
   }
   
   res.send("ok");

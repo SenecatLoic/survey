@@ -17,6 +17,7 @@ import {
 } from "@mui/material";
 import { getLocations } from "../Provider/Location";
 import { getSurveys } from "../Provider/Survey";
+import { io } from "socket.io-client";
 
 export const StyledContainer = styled("div")({
   display: "flex",
@@ -44,6 +45,11 @@ export function Device() {
   const [devices, setdevices]: any[] = useState([]);
 
   useEffect(() => {
+    const socket = io(`${process.env.REACT_APP_SERVEUR}`);
+
+    socket.send("hello", (response: any) => {
+      console.log(response);
+    });
     (async () => {
       let devices = await getDevices();
       const locations = await getLocations();
@@ -63,6 +69,10 @@ export function Device() {
         };
       });
       setdevices(devices);
+      socket.on("device", (res, callback) => {
+        devices.push(res);
+        setdevices([...devices]);
+      });
     })();
   }, []);
 
