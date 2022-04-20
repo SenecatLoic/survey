@@ -31,14 +31,12 @@ const StyledBar = styled(Bar)({
 
 function App() {
   const [surveys, setSurveys]: any[] = useState([]);
+
   useEffect(() => {
     const socket = io(`${process.env.REACT_APP_SERVEUR}`);
 
     socket.send("hello", (response: any) => {
       console.log(response);
-    });
-    socket.on("vote", (res, callback) => {
-      console.log(res);
     });
 
     (async () => {
@@ -47,6 +45,17 @@ function App() {
         //todo
       }
       setSurveys(surveys);
+
+      socket.on("vote", (res, callback) => {
+        console.log(res);
+        for (let i = 0; i < surveys.length; i++) {
+          if (surveys[i].id === res.survey) {
+            surveys[i].data = [...surveys[i].data, ...res.answers];
+          }
+        }
+        console.log(surveys);
+        setSurveys([...surveys]);
+      });
     })();
   }, []);
 

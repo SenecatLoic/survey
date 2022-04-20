@@ -5,6 +5,7 @@ import {
   List,
   ListItemButton,
   ListItemText,
+  Paper,
   Table,
   TableBody,
   TableCell,
@@ -186,43 +187,45 @@ export function Survey() {
       <StyledContainer>
         <StyledStack>
           <StyledTitle>Surveys</StyledTitle>
-          <Table sx={{ maxWidth: "75%" }}>
-            <TableHead>
-              <TableRow>
-                <TableCell /*style={{ width: 50 }}*/></TableCell>
-                <TableCell>Id</TableCell>
-                <TableCell>Name</TableCell>
-                <TableCell>Start date</TableCell>
-                <TableCell>End date</TableCell>
-                <TableCell /*style={{ width: 50 }}style={{ width: 100 }}*/
-                ></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {surveys.map((survey: any) => {
-                if (survey.isEdit) return editMode(survey);
-                else return displayMode(survey);
-              })}
-              <TableRow>
-                <TableCell></TableCell>
-                <TableCell></TableCell>
-                <TableCell></TableCell>
-                <TableCell></TableCell>
-                <TableCell></TableCell>
-                <TableCell>
-                  <IconButton
-                    color={"primary"}
-                    onClick={() => {
-                      setCreateNewSurvey(true);
-                    }}
-                  >
-                    {" "}
-                    <AddIcon />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+          <Paper style={{ overflowX: "auto" }}>
+            <Table sx={{ maxWidth: "75%" }}>
+              <TableHead>
+                <TableRow>
+                  <TableCell /*style={{ width: 50 }}*/></TableCell>
+                  <TableCell>Id</TableCell>
+                  <TableCell>Name</TableCell>
+                  <TableCell>Start date</TableCell>
+                  <TableCell>End date</TableCell>
+                  <TableCell /*style={{ width: 50 }}style={{ width: 100 }}*/
+                  ></TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {surveys.map((survey: any) => {
+                  if (survey.isEdit) return editMode(survey);
+                  else return displayMode(survey);
+                })}
+                <TableRow>
+                  <TableCell></TableCell>
+                  <TableCell></TableCell>
+                  <TableCell></TableCell>
+                  <TableCell></TableCell>
+                  <TableCell></TableCell>
+                  <TableCell>
+                    <IconButton
+                      color={"primary"}
+                      onClick={() => {
+                        setCreateNewSurvey(true);
+                      }}
+                    >
+                      {" "}
+                      <AddIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </Paper>
         </StyledStack>
       </StyledContainer>
       <Dialog

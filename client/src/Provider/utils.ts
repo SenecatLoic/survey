@@ -1,8 +1,6 @@
 export function getAll(url: string) {
   return async function () {
     try {
-      console.log(process.env.REACT_APP_SERVEUR);
-      console.log(url);
       const response = await fetch(`${process.env.REACT_APP_SERVEUR}${url}`, {
         method: "Get",
         headers: {
