@@ -1,6 +1,10 @@
 import {
+  Button,
   IconButton,
   Input,
+  List,
+  ListItemButton,
+  ListItemText,
   Table,
   TableBody,
   TableCell,
@@ -21,11 +25,34 @@ import DesktopDatePicker from "@mui/lab/DesktopDatePicker";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import AddIcon from "@mui/icons-material/Add";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
 
 export function Survey() {
   const [surveys, setsurveys]: any[] = useState([]);
-  let [newSurvey, setNewSurvey]: any[] = useState({});
+  let [newSurvey, setNewSurvey]: any[] = useState({
+    name: "",
+    survey: { question: "", answers: ["", "", ""] },
+  });
   const [createNewSurvey, setCreateNewSurvey]: any[] = useState(false);
+  const [viewSurvey, setViewSurvey]: any[] = useState({
+    enabled: false,
+    survey: { name: "", survey: { answers: ["", "", ""], question: "" } },
+  });
+  const handleClose = () => {
+    setCreateNewSurvey(false);
+  };
+
+  const handleNewAnswer = (e: any, i: any) => {
+    const answers = newSurvey.survey.answers || ["", "", ""];
+    answers[i] = e.target.value;
+    setNewSurvey({
+      ...newSurvey,
+      survey: { ...newSurvey.survey, answers },
+    });
+  };
 
   useEffect(() => {
     (async () => {
@@ -123,10 +150,15 @@ export function Survey() {
   };
 
   const displayMode = (survey: any) => {
+    console.log(survey);
     return (
       <TableRow key={survey.id}>
         <TableCell>
-          <IconButton onClick={() => {}}>
+          <IconButton
+            onClick={() => {
+              setViewSurvey({ enabled: true, survey });
+            }}
+          >
             <VisibilityIcon />
           </IconButton>
         </TableCell>
@@ -162,7 +194,8 @@ export function Survey() {
                 <TableCell>Name</TableCell>
                 <TableCell>Start date</TableCell>
                 <TableCell>End date</TableCell>
-                <TableCell /*style={{ width: 50 }}style={{ width: 100 }}*/></TableCell>
+                <TableCell /*style={{ width: 50 }}style={{ width: 100 }}*/
+                ></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -173,89 +206,174 @@ export function Survey() {
               <TableRow>
                 <TableCell></TableCell>
                 <TableCell></TableCell>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
                 <TableCell>
-                  <Input
-                    onChange={(event) => {
-                      newSurvey = event.target.value;
-                      setNewSurvey(newSurvey);
+                  <IconButton
+                    color={"primary"}
+                    onClick={() => {
+                      setCreateNewSurvey(true);
                     }}
-                  />
-                </TableCell>
-                <TableCell>
-                  <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <DesktopDatePicker
-                      label="date"
-                      inputFormat="dd/MM/yyyy"
-                      value={newSurvey.dtcreation || new Date(newSurvey.dtcreation)}
-                      onChange={(value: any) => {
-                        if (value != null) {
-                          newSurvey.dtcreation = value.getTime();
-                          setsurveys([...surveys]);
-                        }
-                      }}
-                      renderInput={(params: any) => <TextField {...params} />}
-                    />
-                  </LocalizationProvider>
-                </TableCell>
-                <TableCell>
-                  <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <DesktopDatePicker
-                      label="date"
-                      inputFormat="dd/MM/yyyy"
-                      value={newSurvey.dtend || new Date(newSurvey.dtend)}
-                      onChange={(value: any) => {
-                        if (value != null) {
-                          newSurvey.dtend = value.getTime();
-                          setsurveys([...surveys]);
-                        }
-                      }}
-                      renderInput={(params: any) => <TextField {...params} />}
-                    />
-                  </LocalizationProvider>
-                </TableCell>
-                <TableCell>
-                  {createNewSurvey ? (
-                    <>
-                      <IconButton
-                        color={"primary"}
-                        onClick={async () => {
-                          const result = await createSurvey(newSurvey);
-                          if (result && !result.error) {
-                            surveys.push(result);
-                            setsurveys([...surveys]);
-                            setCreateNewSurvey(false);
-                          }
-                        }}
-                      >
-                        <SaveIcon />
-                      </IconButton>
-                      <IconButton
-                        color={"secondary"}
-                        onClick={() => {
-                          setNewSurvey({});
-                          setCreateNewSurvey(false);
-                        }}
-                      >
-                        <CloseIcon />
-                      </IconButton>
-                    </>
-                  ) : (
-                    <IconButton
-                      color={"primary"}
-                      onClick={() => {
-                        setCreateNewSurvey(true);
-                      }}
-                    >
-                      {" "}
-                      <AddIcon />
-                    </IconButton>
-                  )}
+                  >
+                    {" "}
+                    <AddIcon />
+                  </IconButton>
                 </TableCell>
               </TableRow>
             </TableBody>
           </Table>
         </StyledStack>
       </StyledContainer>
+      <Dialog
+        open={viewSurvey.enabled}
+        onClose={() => {
+          setViewSurvey({
+            enabled: false,
+            survey: {
+              name: "",
+              survey: { answers: ["", "", ""], question: "" },
+            },
+          });
+        }}
+      >
+        <DialogTitle>{viewSurvey.survey.name}</DialogTitle>
+        <DialogContent>
+          <List>
+            <ListItemText primary={viewSurvey.survey.survey.question} />
+            <ListItemText
+              primary={`1 - ${viewSurvey.survey.survey.answers[0]}`}
+            />
+            <ListItemText
+              primary={`2 - ${viewSurvey.survey.survey.answers[1]}`}
+            />
+            <ListItemText
+              primary={`3 - ${viewSurvey.survey.survey.answers[2]}`}
+            />
+          </List>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={createNewSurvey} onClose={handleClose}>
+        <DialogTitle>Create a new survey</DialogTitle>
+        <DialogContent>
+          {/* <DialogContentText>
+          
+          </DialogContentText> */}
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Survey Name"
+            type="text"
+            fullWidth
+            variant="standard"
+            onChange={(e) => {
+              setNewSurvey({ ...newSurvey, name: e.target.value });
+            }}
+          />
+          <TextField
+            margin="dense"
+            label="Question"
+            type="text"
+            fullWidth
+            variant="standard"
+            onChange={(e) => {
+              setNewSurvey({
+                ...newSurvey,
+                survey: { ...newSurvey.survey, question: e.target.value },
+              });
+            }}
+          />
+          <TextField
+            margin="dense"
+            label="First Answer"
+            type="text"
+            fullWidth
+            variant="standard"
+            onChange={(e) => {
+              handleNewAnswer(e, 0);
+            }}
+          />
+          <TextField
+            margin="dense"
+            label="Second Answer"
+            type="text"
+            fullWidth
+            variant="standard"
+            onChange={(e) => {
+              handleNewAnswer(e, 1);
+            }}
+          />
+          <TextField
+            margin="dense"
+            label="Third Answer"
+            type="text"
+            fullWidth
+            variant="standard"
+            onChange={(e) => {
+              handleNewAnswer(e, 2);
+            }}
+            style={{ marginBottom: "10px" }}
+          />
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <DesktopDatePicker
+              label="Start Date"
+              inputFormat="dd/MM/yyyy"
+              value={newSurvey.dtcreation || new Date(newSurvey.dtcreation)}
+              onChange={(value: any) => {
+                if (value != null) {
+                  setNewSurvey({
+                    ...newSurvey,
+                    dtcreation: value.getTime(),
+                  });
+                }
+              }}
+              renderInput={(params: any) => <TextField {...params} />}
+            />
+          </LocalizationProvider>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <DesktopDatePicker
+              label="End Date"
+              inputFormat="dd/MM/yyyy"
+              value={newSurvey.dtend || new Date(newSurvey.dtend)}
+              onChange={(value: any) => {
+                if (value != null) {
+                  newSurvey.dtend = value.getTime();
+                  setNewSurvey({
+                    ...newSurvey,
+                    dtend: value.getTime(),
+                  });
+                }
+              }}
+              renderInput={(params: any) => <TextField {...params} />}
+            />
+          </LocalizationProvider>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button
+            onClick={async () => {
+              console.log(newSurvey);
+              if (
+                newSurvey &&
+                newSurvey.name &&
+                newSurvey.dtcreation &&
+                newSurvey.dtend &&
+                newSurvey.survey.question &&
+                newSurvey.survey.answers.length === 3
+              ) {
+                const result = await createSurvey(newSurvey);
+                if (result && !result.error) {
+                  surveys.push(result);
+                  setsurveys([...surveys]);
+                  setCreateNewSurvey(false);
+                }
+              }
+            }}
+          >
+            Create
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }
