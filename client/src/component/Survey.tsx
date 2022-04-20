@@ -1,6 +1,7 @@
 import {
   IconButton,
   Input,
+  Paper,
   Table,
   TableBody,
   TableCell,
@@ -154,106 +155,108 @@ export function Survey() {
       <StyledContainer>
         <StyledStack>
           <StyledTitle>Surveys</StyledTitle>
-          <Table sx={{ maxWidth: "75%" }}>
-            <TableHead>
-              <TableRow>
-                <TableCell /*style={{ width: 50 }}*/></TableCell>
-                <TableCell>Id</TableCell>
-                <TableCell>Name</TableCell>
-                <TableCell>Start date</TableCell>
-                <TableCell>End date</TableCell>
-                <TableCell /*style={{ width: 50 }}style={{ width: 100 }}*/></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {surveys.map((survey: any) => {
-                if (survey.isEdit) return editMode(survey);
-                else return displayMode(survey);
-              })}
-              <TableRow>
-                <TableCell></TableCell>
-                <TableCell></TableCell>
-                <TableCell>
-                  <Input
-                    onChange={(event) => {
-                      newSurvey = event.target.value;
-                      setNewSurvey(newSurvey);
-                    }}
-                  />
-                </TableCell>
-                <TableCell>
-                  <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <DesktopDatePicker
-                      label="date"
-                      inputFormat="dd/MM/yyyy"
-                      value={newSurvey.dtcreation || new Date(newSurvey.dtcreation)}
-                      onChange={(value: any) => {
-                        if (value != null) {
-                          newSurvey.dtcreation = value.getTime();
-                          setsurveys([...surveys]);
-                        }
+          <Paper style={{ overflowX: "auto" }}>
+            <Table sx={{ maxWidth: "75%" }}>
+              <TableHead>
+                <TableRow>
+                  <TableCell /*style={{ width: 50 }}*/></TableCell>
+                  <TableCell>Id</TableCell>
+                  <TableCell>Name</TableCell>
+                  <TableCell>Start date</TableCell>
+                  <TableCell>End date</TableCell>
+                  <TableCell /*style={{ width: 50 }}style={{ width: 100 }}*/></TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {surveys.map((survey: any) => {
+                  if (survey.isEdit) return editMode(survey);
+                  else return displayMode(survey);
+                })}
+                <TableRow>
+                  <TableCell></TableCell>
+                  <TableCell></TableCell>
+                  <TableCell>
+                    <Input
+                      onChange={(event) => {
+                        newSurvey = event.target.value;
+                        setNewSurvey(newSurvey);
                       }}
-                      renderInput={(params: any) => <TextField {...params} />}
                     />
-                  </LocalizationProvider>
-                </TableCell>
-                <TableCell>
-                  <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <DesktopDatePicker
-                      label="date"
-                      inputFormat="dd/MM/yyyy"
-                      value={newSurvey.dtend || new Date(newSurvey.dtend)}
-                      onChange={(value: any) => {
-                        if (value != null) {
-                          newSurvey.dtend = value.getTime();
-                          setsurveys([...surveys]);
-                        }
-                      }}
-                      renderInput={(params: any) => <TextField {...params} />}
-                    />
-                  </LocalizationProvider>
-                </TableCell>
-                <TableCell>
-                  {createNewSurvey ? (
-                    <>
-                      <IconButton
-                        color={"primary"}
-                        onClick={async () => {
-                          const result = await createSurvey(newSurvey);
-                          if (result && !result.error) {
-                            surveys.push(result);
+                  </TableCell>
+                  <TableCell>
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                      <DesktopDatePicker
+                        label="date"
+                        inputFormat="dd/MM/yyyy"
+                        value={newSurvey.dtcreation || new Date(newSurvey.dtcreation)}
+                        onChange={(value: any) => {
+                          if (value != null) {
+                            newSurvey.dtcreation = value.getTime();
                             setsurveys([...surveys]);
-                            setCreateNewSurvey(false);
                           }
                         }}
-                      >
-                        <SaveIcon />
-                      </IconButton>
+                        renderInput={(params: any) => <TextField {...params} />}
+                      />
+                    </LocalizationProvider>
+                  </TableCell>
+                  <TableCell>
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                      <DesktopDatePicker
+                        label="date"
+                        inputFormat="dd/MM/yyyy"
+                        value={newSurvey.dtend || new Date(newSurvey.dtend)}
+                        onChange={(value: any) => {
+                          if (value != null) {
+                            newSurvey.dtend = value.getTime();
+                            setsurveys([...surveys]);
+                          }
+                        }}
+                        renderInput={(params: any) => <TextField {...params} />}
+                      />
+                    </LocalizationProvider>
+                  </TableCell>
+                  <TableCell>
+                    {createNewSurvey ? (
+                      <>
+                        <IconButton
+                          color={"primary"}
+                          onClick={async () => {
+                            const result = await createSurvey(newSurvey);
+                            if (result && !result.error) {
+                              surveys.push(result);
+                              setsurveys([...surveys]);
+                              setCreateNewSurvey(false);
+                            }
+                          }}
+                        >
+                          <SaveIcon />
+                        </IconButton>
+                        <IconButton
+                          color={"secondary"}
+                          onClick={() => {
+                            setNewSurvey({});
+                            setCreateNewSurvey(false);
+                          }}
+                        >
+                          <CloseIcon />
+                        </IconButton>
+                      </>
+                    ) : (
                       <IconButton
-                        color={"secondary"}
+                        color={"primary"}
                         onClick={() => {
-                          setNewSurvey({});
-                          setCreateNewSurvey(false);
+                          setCreateNewSurvey(true);
                         }}
                       >
-                        <CloseIcon />
+                        {" "}
+                        <AddIcon />
                       </IconButton>
-                    </>
-                  ) : (
-                    <IconButton
-                      color={"primary"}
-                      onClick={() => {
-                        setCreateNewSurvey(true);
-                      }}
-                    >
-                      {" "}
-                      <AddIcon />
-                    </IconButton>
-                  )}
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+                    )}
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </Paper>
         </StyledStack>
       </StyledContainer>
     </div>
